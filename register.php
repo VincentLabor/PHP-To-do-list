@@ -1,3 +1,27 @@
+<?php
+
+require "./includes/config.php";
+
+
+$username = $password = $password2 = "";
+$username_err = $password_err = $password2_err = "";
+
+if (isset($_POST['submit'])) {
+    if (empty(trim($_POST["usersname"]))) {
+        $username_err = "Please enter a username";
+        // echo "Please enter a username";
+    } else {
+        $sql = "SELECT * FROM useraccts WHERE user_name = :usersname";
+
+        if ($stmt = $pdo->prepare($sql)) {
+            $stmt->bindParam(":usersname", $param_username, PDO::PARAM_STR);
+            //PDO::PARAM_STR = Represents the SQL CHAR, VARCHAR, or other string data type.
+        }
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,29 +33,16 @@
     <?php
     echo "<link rel='stylesheet' type='text/css' href='./styles.css?v=<?php echo time(); ?>'>";
     ?>
-
+    <script type="text/javascript" src="./app.js"></script>
 </head>
 
-<?php
-
-require_once "./includes/config.php";
-
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//     if(empty(trim($_POST["username"]))){
-//         $username_err = "Please enter a username."; 
-//     } else {
-//         $sql = "SELECT id FROM useracct WHERE username=?";
-
-//     }
-// }
-
-?>
 
 <body>
     <main>
 
         <h1 class="red">
-            Greetings
+            <a href="/"> Greetings</a>
+
         </h1>
         <div id="login" class="fullWidth leftAlignText  centerFlex">
 
@@ -40,11 +51,14 @@ require_once "./includes/config.php";
                 <p>Username</p>
                 <input type="text" name="usersname">
                 <p>Password</p>
-                <input type="text" name="password">
-                <!-- <p>Confirm Password</p>
-                <input type="text"> -->
-                <!-- <input type="submit" class="submitBtn"></input> -->
-                <input type="submit" name="submit" value="submit" class="submitBtn"/>
+                <input type="password" name="password">
+                <p>Confirm Password</p>
+                <input type="password" name="password2">
+
+                <input type="submit" name="submit" value="submit" class="submitBtn" />
+                <?php
+                echo $username_err;
+                ?>
             </form>
 
 
