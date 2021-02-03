@@ -5,7 +5,6 @@ $dbPort = 5432;
 $dbName = 'test2';
 $dbUser = 'postgres';
 $dbPass = 'FaLLaCY95!SQL';
-
 $dsn = "pgsql:host=$dbHost;port=$dbPort;dbname=$dbName;user=$dbUser;password=$dbPass";
 
 try{

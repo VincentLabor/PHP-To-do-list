@@ -63,75 +63,53 @@ if (isset($_POST['submit'])) {
     //Preparing an insert statement.
     if (empty($username_err) && empty($password_err) && empty($password2_err)) {
         $sql = "INSERT INTO useracct(user_name, pass_word) VALUES (:username,:password)";
-    }
 
-    if ($stmt = $pdo->prepare($sql)) {
-        $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-        $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
+        if ($stmt = $pdo->prepare($sql)) {
+            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
+            $stmt->bindParam(":password", $param_password, PDO::PARAM_STR);
 
-        //Set the parameters here
-        $param_username = $username;
-        $param_password = password_hash($password, PASSWORD_DEFAULT);
+            //Set the parameters here
+            $param_username = $username;
+            $param_password = password_hash($password, PASSWORD_DEFAULT);
 
-        if ($stmt->execute()) {
-            header("location: register.php");
-        } else {
-            echo "Something went wrong. Please try again later.";
+            if ($stmt->execute()) {
+                header("location: register.php");
+            } else {
+                echo "Something went wrong. Please try again later.";
+            }
+
+            //Close statement
+            unset($stmt);
         }
     }
+    unset($pdo);
 }
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do List</title>
-
-    <?php
-    echo "<link rel='stylesheet' type='text/css' href='./styles.css?v=<?php echo time(); ?>'>";
-    ?>
-    <script type="text/javascript" src="./app.js"></script>
-</head>
+<?php
+include_once('header.php');
+?>
 
 
-<body>
-    <main>
-
-        <h1 class="red">
-            <a href="/"> Greetings</a>
-
-        </h1>
-        <div id="login" class="fullWidth leftAlignText  centerFlex">
-
-            <form action="" method="POST" class="pad2em blBorder">
-                <h2 class="centerText">Register</h2>
-                <p>Username</p>
-                <input type="text" name="username" value="<?php echo $username;  ?>">
-                <?php echo $username_err; ?>
-                <p>Password</p>
-                <input type="password" name="password">
-                <?php echo $password_err; ?>
-                <p>Confirm Password</p>
-                <input type="password" name="password2">
-                <?php echo $password2_err; ?>
-
-                <input type="submit" name="submit" value="submit" class="submitBtn" />
-                <?php
-
-
-
-                ?>
-            </form>
-
-
-        </div>
-    </main>
+<div id="login" class="fullWidth leftAlignText  centerFlex">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" class="pad2em blBorder">
+        <h2 class="centerText">Register</h2>
+        <p>Username</p>
+        <input type="text" name="username" value="<?php echo $username;  ?>">
+        <?php echo $username_err; ?>
+        <p>Password</p>
+        <input type="password" name="password">
+        <?php echo $password_err; ?>
+        <p>Confirm Password</p>
+        <input type="password" name="password2">
+        <?php echo $password2_err; ?>
+        <input type="submit" name="submit" value="submit" class="submitBtn" />
+        <a href="./login.php">Already have an account? Click here</a>
+    </form>
+</div>
+</main>
 </body>
 
 </html>
-
 <?php
