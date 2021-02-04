@@ -5,7 +5,7 @@ require "./includes/config.php";
 session_start();
 
 //Check if user us already logged in. Will redirect if so. 
-if (isset($_SESSION["loggedin"]) && $_SESSION("loggedin") == true) {
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true) {
     header("location:welcome.php");
     exit;
 }
@@ -80,8 +80,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php echo $username_error; ?>
         <p>Password</p>
         <input type="password" name="password">
-        <?php echo $password_error; ?>
+       <p class="red"> <?php echo $password_error; ?></p>
         <input type="submit" name="submit" value="submit" class="submitBtn" />
+        <a href="./register.php">Don't have an account? Sign up here.</a>
     </form>
 </div>
 </main>

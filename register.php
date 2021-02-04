@@ -2,6 +2,14 @@
 
 require "./includes/config.php";
 
+session_start();
+
+//Check if user us already logged in. Will redirect if so. 
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true) {
+    header("location:welcome.php");
+    exit;
+}
+
 
 $username = $password = $password2 = "";
 $username_err = $password_err = $password2_err = "";
@@ -15,6 +23,7 @@ if (isset($_POST['submit'])) {
         //This is a database query; Will utilize a prepare and execute.
         $sql = "SELECT * FROM useracct WHERE user_name = :username";
 
+        //Remember that colon is a placeholder.
         if ($stmt = $pdo->prepare($sql)) {
             $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
             //The bind basically is replacing the paramater with a real value.
@@ -73,7 +82,7 @@ if (isset($_POST['submit'])) {
             $param_password = password_hash($password, PASSWORD_DEFAULT);
 
             if ($stmt->execute()) {
-                header("location: register.php");
+                header("location: welcome.php");
             } else {
                 echo "Something went wrong. Please try again later.";
             }
