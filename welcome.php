@@ -51,9 +51,21 @@ if (isset($_POST['submit'])) {
             $user = $_SESSION["username"];
             //Through each iteration, each value of the element is set to $row.
             //Next to each row is a checkbox concatenated. 
-            foreach ($pdo->query("SELECT * FROM tasklist where user_associated = '$user'") as $row) {
-                print nl2br($row['task'] . '<input type="checkbox" name="" id="">' . "\n");
+            $sql = "SELECT * FROM tasklist where user_associated = :usernames";
+            if ($stmt = $pdo->prepare($sql)) {
+                $stmt->bindParam(":usernames", $param_usernames, PDO::PARAM_STR);
+                $param_usernames = $_SESSION['username'];
+                //How do i prepare a query?
+                $query_process = ($pdo->query("SELECT * FROM tasklist where user_associated = '$user'"));
+                if ($stmt->execute()) {
+                    foreach ($query_process as $row) {
+                        print nl2br($row['task'] . '<input type="checkbox" name="" id="">' . "\n");
+                    }
+                } else {
+                    echo "An error has occured. Please try again later.";
+                }
             }
+
             ?>
         </p>
 
