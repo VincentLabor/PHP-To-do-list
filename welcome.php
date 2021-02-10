@@ -3,8 +3,8 @@ include_once('header.php');
 include "./includes/config.php";
 session_start();
 
-$task = $complete = $user_associated = "";
-$task_err = $complete_err = $user_associated_err = "";
+$task = $complete = $task_complete = $user_associated = "";
+$task_err = $complete_err = $task_complete_error = $user_associated_err = "";
 
 if (isset($_POST['submit'])) {
     if (empty(trim($_POST["task"]))) {
@@ -39,6 +39,7 @@ if (isset($_POST['submit'])) {
 ?>
 
 <h1><a href="./logout.php">Click here to log out</a></h1>
+<h1><a href="./reset-password.php">Click here to change your password</a></h1>
 
 
 <div id="login" class="fullWidth leftAlignText  centerFlex">
@@ -55,11 +56,10 @@ if (isset($_POST['submit'])) {
             if ($stmt = $pdo->prepare($sql)) {
                 $stmt->bindParam(":usernames", $param_usernames, PDO::PARAM_STR);
                 $param_usernames = $_SESSION['username'];
-                //How do i prepare a query?
                 $query_process = ($pdo->query("SELECT * FROM tasklist where user_associated = '$user'"));
                 if ($stmt->execute()) {
                     foreach ($query_process as $row) {
-                        print nl2br($row['task'] . '<input type="checkbox" name="" id="">' . "\n");
+                        print nl2br($row['task'] . '<input type="checkbox" name="task_compl" id="">' . "\n");
                     }
                 } else {
                     echo "An error has occured. Please try again later.";
