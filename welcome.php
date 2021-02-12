@@ -15,14 +15,16 @@ if (isset($_POST['submit'])) {
 
     if (empty($task_err)) {
         //We are going to bind both the task and user who submitted the task.
-        $sql = "INSERT INTO tasklist(task, user_associated) VALUES (:task, :associated)";
+        $sql = "INSERT INTO tasklist(task, user_associated, complete) VALUES (:task, :associated, :completion)";
 
         if ($stmt = $pdo->prepare($sql)) {
             $stmt->bindParam(":task", $param_task, PDO::PARAM_STR);
             $stmt->bindParam(":associated", $param_user_associated, PDO::PARAM_STR);
+            $stmt->bindParam(":completion", $param_completion, PDO::PARAM_BOOL);
 
             $param_task = $task;
             $param_user_associated = $_SESSION["username"];
+            $param_completion = false;
 
             if ($stmt->execute()) {
                 // header("location: welcome.php");
@@ -34,6 +36,23 @@ if (isset($_POST['submit'])) {
         }
     }
     unset($pdo);
+}
+
+if (isset($_GET['del_task'])) {
+    $sql = "DELETE FROM tasklist WHERE id = :id";
+
+    if($stmt = $pdo->prepare($sql)){
+        $stmt->bindParam(":id", $param_task_id, PDO::PARAM_INT);
+
+        $param_task_id = trim($_GET['del_task']);
+
+        if($stmt->execute()){
+            //deletion and return to the page
+            header("location: welcome.php");
+        } else {
+            echo "An error has occured. Please try again later. ";
+        }
+    }
 }
 
 ?>
@@ -58,8 +77,11 @@ if (isset($_POST['submit'])) {
                 $param_usernames = $_SESSION['username'];
                 $query_process = ($pdo->query("SELECT * FROM tasklist where user_associated = '$user'"));
                 if ($stmt->execute()) {
+                    //The foreach has the checkbox input
                     foreach ($query_process as $row) {
-                        print nl2br($row['task'] . '<input type="checkbox" name="task_compl" id="">' . "\n");
+                        //This inserts a html linebreak before all newlines. 
+                        //Maybe I can add one of those if else statements with the question marks.
+                        print nl2br($row['task'] . "<a href = 'welcome.php?del_task=$row[id] '>x</a>" . "\n");
                     }
                 } else {
                     echo "An error has occured. Please try again later.";
@@ -88,3 +110,5 @@ if (isset($_POST['submit'])) {
 
 
 <!-- 'SELECT * FROM tasklist WHERE user_associated ="' . $user . '" ' -->
+
+<!-- // print nl2br($row['task'] . ($row['complete'] == true ? "<input type='checkbox' checked>" : "<input type='checkbox' name='checkers'>"). "\n") -->
